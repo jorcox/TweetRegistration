@@ -80,18 +80,19 @@ function hackathonChange() {
 			url : "/hack-info/old",
 			data : $("#shortener")
 					.serialize(),
-			success : function() {
-				$("#loading").hide();
-				$("#no").hide();
-				$("#yes").show();
-				$("#validation")
-						.removeClass(
-								"has-error")
-						.addClass(
-								"has-success");
+			success : function(result) {
+				console.log(result);
+				//$("#loading").hide();
+				//$("#no").hide();
+				//$("#yes").show();
+				//$("#validation")
+				//		.removeClass(
+				//				"has-error")
+				//		.addClass(
+				//				"has-success");
 			},
 			error : function(msg, error, status) {
-				
+				console.log('Error');
 				
 			}
 		});
@@ -101,7 +102,7 @@ function hackathonChange() {
 		$("#resultsBlock").empty();	
 		// Creating WebSocket
 		if (client == null) stompConnection();
-		else subscribeTwitter($('input#q').val());
+		else subscribeTwitter(selectedText);
 	});
 }
 

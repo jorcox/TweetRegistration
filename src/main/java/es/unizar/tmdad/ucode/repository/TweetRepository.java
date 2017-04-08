@@ -16,6 +16,8 @@ public interface TweetRepository extends MongoRepository<TargetedTweet, BigInteg
 	//long countByHash(String hash);
 
 	TargetedTweet save(TargetedTweet tweet);
+	
+	List<TargetedTweet> findByTargetsContaining(String hackathon);
 
 	void deleteAll();
 		

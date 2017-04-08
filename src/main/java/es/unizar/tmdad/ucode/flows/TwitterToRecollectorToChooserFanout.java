@@ -25,16 +25,22 @@ import org.springframework.social.twitter.api.Tweet;
 public class TwitterToRecollectorToChooserFanout extends TwitterToRecollectorToChooserFlow {
 
 	final static String TWITTER_FANOUT_EXCHANGE = "twitter_fanout";
-	final static String TWITTER_FANOUT_A_QUEUE_NAME = "twitter_fanout_queue";
+	final static String TWITTER_FANOUT_A_QUEUE_NAME_OUT = "twitter_fanout_queue_out";
+	final static String CHOOSER_FANOUT_A_QUEUE_NAME_IN = "chooser_fanout_queue_in";
 
 	@Autowired
 	RabbitTemplate rabbitTemplate;
 
 	// Configuración RabbitMQ
+	
+	@Bean
+	Queue outTwitterFanoutQueue() {
+		return new Queue(TWITTER_FANOUT_A_QUEUE_NAME_OUT, false);
+	}
 
 	@Bean
-	Queue aTwitterFanoutQueue() {
-		return new Queue(TWITTER_FANOUT_A_QUEUE_NAME, false);
+	Queue inChooserFanoutQueue() {
+		return new Queue(CHOOSER_FANOUT_A_QUEUE_NAME_IN, false);
 	}
 
 	@Bean
@@ -44,7 +50,13 @@ public class TwitterToRecollectorToChooserFanout extends TwitterToRecollectorToC
 
 	@Bean
 	Binding twitterFanoutBinding() {
-		return BindingBuilder.bind(aTwitterFanoutQueue()).to(
+		return BindingBuilder.bind(outTwitterFanoutQueue()).to(
+				twitterFanoutExchange());
+	}
+	
+	@Bean
+	Binding twitterFanoutBinding1() {
+		return BindingBuilder.bind(inChooserFanoutQueue()).to(
 				twitterFanoutExchange());
 	}
 
@@ -119,7 +131,7 @@ public class TwitterToRecollectorToChooserFanout extends TwitterToRecollectorToC
 	public AmqpInboundChannelAdapter amqpInboundUpdater() {
 		SimpleMessageListenerContainer smlc = new SimpleMessageListenerContainer(
 				rabbitTemplate.getConnectionFactory());
-		smlc.setQueues(aTwitterFanoutQueue());
+		smlc.setQueues(a1TwitterFanoutQueue());
 		return Amqp.inboundAdapter(smlc)
 				.outputChannel(requestChannelRabbitMQUpdater()).get();
 	}
@@ -128,7 +140,7 @@ public class TwitterToRecollectorToChooserFanout extends TwitterToRecollectorToC
 	public AmqpInboundChannelAdapter amqpInboundSaver() {
 		SimpleMessageListenerContainer smlc = new SimpleMessageListenerContainer(
 				rabbitTemplate.getConnectionFactory());
-		smlc.setQueues(aTwitterFanoutQueue());
+		smlc.setQueues(a2TwitterFanoutQueue());
 		return Amqp.inboundAdapter(smlc)
 				.outputChannel(requestChannelRabbitMQSaver()).get();
 	}
@@ -137,7 +149,7 @@ public class TwitterToRecollectorToChooserFanout extends TwitterToRecollectorToC
 	public AmqpInboundChannelAdapter amqpInboundProcessor() {
 		SimpleMessageListenerContainer smlc = new SimpleMessageListenerContainer(
 				rabbitTemplate.getConnectionFactory());
-		smlc.setQueues(aTwitterFanoutQueue());
+		smlc.setQueues(a3TwitterFanoutQueue());
 		return Amqp.inboundAdapter(smlc)
 				.outputChannel(requestChannelRabbitMQProccessor()).get();
 	}

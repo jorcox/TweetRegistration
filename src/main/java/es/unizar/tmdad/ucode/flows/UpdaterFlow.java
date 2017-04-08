@@ -15,7 +15,7 @@ import es.unizar.tmdad.ucode.domain.MyTweet;
 import es.unizar.tmdad.ucode.domain.TargetedTweet;
 import es.unizar.tmdad.ucode.service.TwitterLookupService;
 
-abstract public class ChooserToProcessorFlow {
+abstract public class UpdaterFlow {
 
 	@Autowired
 	private TwitterLookupService tls;
@@ -29,9 +29,9 @@ abstract public class ChooserToProcessorFlow {
 				.split(TargetedTweet.class, duplicateByTopic())
 				.transform(highlight())
 				.handle("streamSendingService", "sendTweet").get();
-	}
+	}*/
 
-	abstract protected AbstractMessageChannel requestChannelRabbitMQ();*/
+	//abstract protected AbstractMessageChannel requestSaverChannel();
 
 	/*private GenericTransformer<TargetedTweet, TargetedTweet> highlight() {
 		return t -> {			

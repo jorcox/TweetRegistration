@@ -11,21 +11,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.integration.amqp.inbound.AmqpInboundChannelAdapter;
-import org.springframework.integration.amqp.outbound.AmqpOutboundEndpoint;
 import org.springframework.integration.channel.DirectChannel;
-import org.springframework.integration.dsl.IntegrationFlow;
-import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.amqp.Amqp;
 import org.springframework.integration.dsl.channel.MessageChannels;
-import org.springframework.integration.transformer.GenericTransformer;
-import org.springframework.social.twitter.api.Tweet;
 
 @Configuration
 @Profile("fanout")
-public class ChoosserToProcessorFlowFanout extends ChooserToProcessorFlow {
+public class UpdaterFlowFanout extends SaverFlow {
 
-	final static String CHOOSER_TO_PROCESSOR_FANOUT_EXCHANGE = "chooser_to_processor_fanout";
-	final static String CHOOSER_TO_PROCESSOR_FANOUT_A_QUEUE_NAME = "chooser_to_processor_fanout_queue";
+	final static String CHOOSER_OUTPUT_FANOUT_EXCHANGE = "chooser_output_fanout";
+	final static String CHOOSER_OUTPUT_FANOUT_A_QUEUE_NAME = "chooser_output_fanout_queue";
 
 	@Autowired
 	RabbitTemplate rabbitTemplate;
@@ -33,19 +28,19 @@ public class ChoosserToProcessorFlowFanout extends ChooserToProcessorFlow {
 	// Configuración RabbitMQ
 
 	@Bean
-	Queue aTwitterFanoutQueue() {
-		return new Queue(CHOOSER_TO_PROCESSOR_FANOUT_A_QUEUE_NAME, false);
+	Queue aChooserFanoutQueue() {
+		return new Queue(CHOOSER_OUTPUT_FANOUT_A_QUEUE_NAME, false);
 	}
 
 	@Bean
-	FanoutExchange twitterFanoutExchange() {
-		return new FanoutExchange(CHOOSER_TO_PROCESSOR_FANOUT_EXCHANGE);
+	FanoutExchange chooserFanoutExchange() {
+		return new FanoutExchange(CHOOSER_OUTPUT_FANOUT_EXCHANGE);
 	}
 
 	@Bean
 	Binding twitterFanoutBinding() {
-		return BindingBuilder.bind(aTwitterFanoutQueue()).to(
-				twitterFanoutExchange());
+		return BindingBuilder.bind(aChooserFanoutQueue()).to(
+				chooserFanoutExchange());
 	}
 
 	// Flujo # ENVIAR
@@ -54,57 +49,57 @@ public class ChoosserToProcessorFlowFanout extends ChooserToProcessorFlow {
 	// RabbitMQ
 	//
 
-	@Bean
-	public DirectChannel requestProcessorChannel() {
+	/*@Bean
+	public DirectChannel requestChooserOutputChannel() {
 		return MessageChannels.direct().get();
 	}
 
 	@Bean
-	public AmqpOutboundEndpoint amqpOutbound() {
+	public AmqpOutboundEndpoint amqpChooserOutbound() {
 		return Amqp.outboundAdapter(rabbitTemplate)
-				.exchangeName(CHOOSER_TO_PROCESSOR_FANOUT_EXCHANGE).get();
-	}
+				.exchangeName(CHOOSER_OUTPUT_FANOUT_EXCHANGE).get();
+	}*/
 
-	@Bean
-	public IntegrationFlow sendTweetToRabbitMQ() {
+	/*@Bean
+	public IntegrationFlow sendTargetedTweetToRabbitMQ() {
 		/*
 		 *  We take the tweets coming form the chooser send it 
 		 *  to RabbitMQ queues in order to be get by processors
 		 */		
-		return IntegrationFlows.from(requestProcessorChannel())
-				//.transform(highlight())		// Debug Purposes
-				.handle(amqpOutbound()).get();
+		/*return IntegrationFlows.from(requestChooserOutputChannel())
+				.transform(highlight())		// Debug Purposes
+				.handle(amqpChooserOutbound()).get();
 	}
 	
-	private GenericTransformer<Tweet, Tweet> highlight() {
+	private GenericTransformer<TargetedTweet, TargetedTweet> highlight() {
 		return t -> {			
 			//String tag = t.getFirstTarget();
-			String text = t.getUnmodifiedText();
-			System.out.println("PRE --> " + text);
+			String text = t.getTweet().getUnmodifiedText();
+			System.out.println("CHOOSER --> " + text);
 			//t.getTweet().setUnmodifiedText(
 			//		text.replaceAll(tag, "<b>" + tag + "</b>"));
 			return t;
 		};
-	}
+	}*/
 	
 
 	// Flujo #2
 	//
 	// MessageEndpoint RabbitMQ -(requestChannelRabbitMQ)-> tareas ...
 	//
-/*
-	@Override
+
+	/*@Override
 	@Bean
-	public DirectChannel requestChannelRabbitMQ() {
+	public DirectChannel requestSaverChannel() {
 		return MessageChannels.direct().get();
 	}
 
 	@Bean
-	public AmqpInboundChannelAdapter amqpInbound() {
+	public AmqpInboundChannelAdapter amqpSaverInbound() {
 		SimpleMessageListenerContainer smlc = new SimpleMessageListenerContainer(
 				rabbitTemplate.getConnectionFactory());
-		smlc.setQueues(aTwitterFanoutQueue());
+		smlc.setQueues(aChooserFanoutQueue());
 		return Amqp.inboundAdapter(smlc)
-				.outputChannel(requestChannelRabbitMQ()).get();
+				.outputChannel(requestSaverChannel()).get();
 	}*/
 }

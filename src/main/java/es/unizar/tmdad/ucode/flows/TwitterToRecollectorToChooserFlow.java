@@ -33,6 +33,9 @@ abstract public class TwitterToRecollectorToChooserFlow {
 	
 	@Scheduled(fixedDelay=5000)
 	public void getTopicsFromDB() {
+		
+		System.out.println("QUERIESSSSSSSS -> " + tls.getQueries());
+		
 		hackathonRepository.save(new Hackathon(null,"uCode", "EINA" , "buena web", "to"));
 		List<Hackathon> hackathons = hackathonRepository.findAll();
 		topics = hackathons.stream()

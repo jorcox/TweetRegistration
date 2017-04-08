@@ -1,5 +1,7 @@
 package es.unizar.tmdad.ucode.web;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -14,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.unizar.tmdad.ucode.domain.Query;
+import es.unizar.tmdad.ucode.domain.TargetedTweet;
+import es.unizar.tmdad.ucode.repository.HackathonRepository;
+import es.unizar.tmdad.ucode.repository.TweetRepository;
 import es.unizar.tmdad.ucode.service.TwitterLookupService;
 
 @Controller
@@ -21,6 +26,12 @@ public class IndexController {
 
     @Autowired
     TwitterLookupService twitter;
+    
+    @Autowired
+    HackathonRepository hackathonRepository;
+    
+    @Autowired
+    TweetRepository tweetRepository;
 
     @RequestMapping("/")
     public String greeting() {
@@ -31,6 +42,14 @@ public class IndexController {
     @MessageMapping("/search")
     public void search(Query q) {
         twitter.search(q.getQuery());
+    }
+    
+    @ResponseBody
+    @MessageMapping("/hack-info/old")
+    public List<TargetedTweet> hackathonInfo(Query q) {
+    	List<TargetedTweet> tweets = tweetRepository.findByTargetsContaining(q.getQuery());
+    	System.out.println(tweets);
+    	return tweets;
     }
     
 	protected static String getOwnerMail() {
