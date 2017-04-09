@@ -56,6 +56,9 @@ public class StreamSendingService {
 	// Cuarto paso
 	// Recibe un tweet y hay que enviarlo a tantos canales como preguntas hay registradas en lookupService
 	//
+	
+	
+	
 	public void sendTweet(Tweet tweet) {
 
 		Map<String, Object> map = new HashMap<>();

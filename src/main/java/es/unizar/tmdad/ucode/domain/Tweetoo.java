@@ -90,9 +90,6 @@ public class Tweetoo extends TwitterObject implements Serializable {
 		this.user = t.getUser();
 	}
 
-	
-	
-
 	/**
 	 * The text of the tweet. If this tweet is a retweet of another tweet, the text may be preceeded with "RT \@someuser" and may be truncated at the end.
 	 * To get the raw, unmodified text of the original tweet, use {@link #getUnmodifiedText()}. 

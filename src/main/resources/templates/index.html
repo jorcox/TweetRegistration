@@ -58,12 +58,7 @@
 		<div class="col-md-4">
 			<div class="form-group">
 			  <label for="sel1">Select hackathon:</label>
-			  <select class="form-control" id="HackathonSelect">
-				    <option>uCode</option>
-				    <option>HackUPC</option>
-				    <option>SpaceApps</option>
-				    <option>Fujitsu</option>
-				    <option>to</option>
+			  <select class="form-control" id="HackathonSelect" placeholder="Empty. Create one.">
 			  </select>
 			</div>
 		</div>
@@ -87,30 +82,32 @@
 	        <button type="button" class="close" data-dismiss="modal">&times;</button>
 	        <h4 class="modal-title">Modal Header</h4>
 	      </div>
-	      <div class="modal-body">
-	        <div class="input-group">
-			  <input type="text" class="form-control" placeholder="Name" aria-describedby="basic-addon1">
-			</div>
-			
-			<div class="input-group">
-			  <input type="text" class="form-control" placeholder="Venue" aria-describedby="basic-addon2">
-			</div>
-			
-			<div class="input-group">
-			  <span class="input-group-addon" id="basic-addon3">http://</span>
-			  <input type="text" class="form-control" placeholder="Web" aria-describedby="basic-addon3">
-			  <span class="input-group-addon"></span>
-			</div>
-			
-			<div class="input-group">
-			  <input type="text" class="form-control" placeholder="Tag" aria-describedby="basic-addon4">
-			  <span class="input-group-addon"></span>
-			</div>
-	      </div>
-	      <div class="modal-footer">
-	      	<button type="button" class="btn btn-default btn-success" >Save</button>
-	        <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
-	      </div>
+	      <form>
+	      	<div class="modal-body">	      	
+		        <div class="input-group">
+				  <input type="text" class="form-control" id="name" placeholder="Name" aria-describedby="basic-addon1">
+				</div>
+				
+				<div class="input-group">
+				  <input type="text" class="form-control" id="venue" placeholder="Venue" aria-describedby="basic-addon2">
+				</div>
+				
+				<div class="input-group">
+				  <span class="input-group-addon" id="basic-addon3">http://</span>
+				  <input type="text" class="form-control" id="web" placeholder="Web" aria-describedby="basic-addon3">
+				  <span class="input-group-addon"></span>
+				</div>
+				
+				<div class="input-group">
+				  <input type="text" class="form-control" id="tag" placeholder="Tag" aria-describedby="basic-addon4">
+				  <span class="input-group-addon"></span>
+				</div>			
+		      </div>
+		      <div class="modal-footer">
+		      	<button type="button" id="saveHackathon" type="submit" class="btn btn-default btn-success" >Save</button>
+		        <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
+		      </div>
+	      </form>
 	    </div>
 	
 	  </div>
@@ -118,7 +115,7 @@
 	<div>
 		<div class="col-md-4">
 		    <!-- Formulario principal -->
-		    <form id="search" action="search" method="get">
+		    <!--<form id="search" action="search" method="get">
 		        <div class="row">
 		            <input type="text" class="form-control" id="q" name="q"
 		                   placeholder="Hackathon field"/>
@@ -127,13 +124,13 @@
 		        <div class="row">
 		            <button type="submit" class="btn btn-default center-block">Buscar</button>
 		        </div>
-		    </form>
+		    </form>-->
 		    <div class="row">&nbsp;</div>
 		    <div id="resultsBlock"></div>
 		</div>
 	</div>
 		<div class="col-md-4"><!-- Formulario principal -->
-		    <form id="search" action="search" method="get">
+		    <!--<form id="search" action="search" method="get">
 		        <div class="row">
 		            <input type="text" class="form-control" id="q" name="q"
 		                   placeholder="Hackathon field"/>
@@ -142,7 +139,7 @@
 		        <div class="row">
 		            <button type="submit" class="btn btn-default center-block">Buscar</button>
 		        </div>
-		    </form>
+		    </form>-->
 		</div>
 </div>
 </body>

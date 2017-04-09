@@ -13,11 +13,22 @@ public class MyTweet implements Serializable {
 	private Tweetoo tweet;
 	
 	private String text;
+	
+	private String idStr;
 
 	public MyTweet(Tweetoo tweet) {
 		this.tweet = tweet;
+		this.idStr = String.valueOf(tweet.getId());
+	}	
+		
+	public String getIdStr() {
+		return idStr;
 	}
-	
+
+	public void setIdStr(String idStr) {
+		this.idStr = idStr;
+	}
+
 	public Map<String, Object> getExtraData() {
 		return tweet.getExtraData();
 	}
