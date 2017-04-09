@@ -20,18 +20,18 @@ abstract public class UpdaterFlow {
 	@Autowired
 	private TwitterLookupService tls;
 
-	/*@Bean
+	@Bean
 	public IntegrationFlow sendTweet() {
 		return IntegrationFlows
-				.from(requestChannelRabbitMQ())
-				.filter("payload instanceof T(org.springframework.social.twitter.api.Tweet)")
-				.transform(identifyTopics())
-				.split(TargetedTweet.class, duplicateByTopic())
-				.transform(highlight())
+				.from(requestUpdateChannel())
+				.filter("payload instanceof T(es.unizar.tmdad.ucode.domain.TargetedTweet)")
+				//.transform(identifyTopics())
+				//.split(TargetedTweet.class, duplicateByTopic())
+				//.transform(highlight())
 				.handle("streamSendingService", "sendTweet").get();
-	}*/
+	}
 
-	//abstract protected AbstractMessageChannel requestSaverChannel();
+	abstract protected AbstractMessageChannel requestUpdateChannel();
 
 	/*private GenericTransformer<TargetedTweet, TargetedTweet> highlight() {
 		return t -> {			

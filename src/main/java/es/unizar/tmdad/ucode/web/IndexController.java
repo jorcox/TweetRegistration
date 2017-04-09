@@ -13,8 +13,12 @@ import org.springframework.social.google.api.Google;
 import org.springframework.social.security.SocialAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.collect.Lists;
+
+import es.unizar.tmdad.ucode.domain.Hackathon;
 import es.unizar.tmdad.ucode.domain.Query;
 import es.unizar.tmdad.ucode.domain.TargetedTweet;
 import es.unizar.tmdad.ucode.repository.HackathonRepository;
@@ -45,11 +49,19 @@ public class IndexController {
     }
     
     @ResponseBody
-    @MessageMapping("/hack-info/old")
+    @RequestMapping(value = "/hack", method = RequestMethod.GET)
     public List<TargetedTweet> hackathonInfo(Query q) {
-    	List<TargetedTweet> tweets = tweetRepository.findByTargetsContaining(q.getQuery());
+    	List<TargetedTweet> tweets = tweetRepository.findByHackathon(q.getQuery());
     	System.out.println(tweets);
-    	return tweets;
+    	return Lists.reverse(tweets);
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "/hackathons", method = RequestMethod.GET)
+    public List<Hackathon> hackathon() {
+    	List<Hackathon> hackathon = hackathonRepository.findAll();
+    	System.out.println(hackathon);
+    	return hackathon;
     }
     
 	protected static String getOwnerMail() {

@@ -1,6 +1,7 @@
 $(document).ready(
     function() {
         $('#submit').click(function(event){
+        	//console.log($("#mail").serialize());
            	$.ajax({
 				type : "GET",
 				data : $("#mail")

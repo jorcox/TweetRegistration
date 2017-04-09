@@ -58,7 +58,8 @@ public class TwitterToRecollectorToChooserDirect extends TwitterToRecollectorToC
 	 * 
 	 * RECOLLECTOR OUTPUT 
 	 */
-
+	
+	@Override
 	@Bean
 	public DirectChannel requestChooserChannelTwitter() {
 		return MessageChannels.direct().get();
@@ -99,19 +100,19 @@ public class TwitterToRecollectorToChooserDirect extends TwitterToRecollectorToC
 
 	@Override
 	@Bean
-	public DirectChannel requestChannelRabbitMQUpdater() {
+	public DirectChannel requestChannelRabbitMQChooser1() {
 		return MessageChannels.direct().get();
 	}
 	
 	@Override
 	@Bean
-	public DirectChannel requestChannelRabbitMQSaver() {
+	public DirectChannel requestChannelRabbitMQChooser2() {
 		return MessageChannels.direct().get();
 	}
 	
 	@Override
 	@Bean
-	public DirectChannel requestChannelRabbitMQProccessor() {
+	public DirectChannel requestChannelRabbitMQChooser3() {
 		return MessageChannels.direct().get();
 	}
 
@@ -121,7 +122,7 @@ public class TwitterToRecollectorToChooserDirect extends TwitterToRecollectorToC
 				rabbitTemplate.getConnectionFactory());
 		smlc.setQueues(aTwitterDirectQueue());
 		return Amqp.inboundAdapter(smlc)
-				.outputChannel(requestChannelRabbitMQUpdater()).get();
+				.outputChannel(requestChannelRabbitMQChooser1()).get();
 	}
 	
 	@Bean
@@ -130,7 +131,7 @@ public class TwitterToRecollectorToChooserDirect extends TwitterToRecollectorToC
 				rabbitTemplate.getConnectionFactory());
 		smlc.setQueues(aTwitterDirectQueue());
 		return Amqp.inboundAdapter(smlc)
-				.outputChannel(requestChannelRabbitMQSaver()).get();
+				.outputChannel(requestChannelRabbitMQChooser2()).get();
 	}
 	
 	@Bean
@@ -139,7 +140,7 @@ public class TwitterToRecollectorToChooserDirect extends TwitterToRecollectorToC
 				rabbitTemplate.getConnectionFactory());
 		smlc.setQueues(aTwitterDirectQueue());
 		return Amqp.inboundAdapter(smlc)
-				.outputChannel(requestChannelRabbitMQProccessor()).get();
+				.outputChannel(requestChannelRabbitMQChooser3()).get();
 	}
 
 }

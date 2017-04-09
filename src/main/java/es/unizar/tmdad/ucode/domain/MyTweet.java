@@ -1,5 +1,6 @@
 package es.unizar.tmdad.ucode.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
@@ -7,13 +8,13 @@ import org.springframework.social.twitter.api.Entities;
 import org.springframework.social.twitter.api.Tweet;
 import org.springframework.social.twitter.api.TwitterProfile;
 
-public class MyTweet {
+public class MyTweet implements Serializable {
 
-	private Tweet tweet;
+	private Tweetoo tweet;
 	
 	private String text;
 
-	public MyTweet(Tweet tweet) {
+	public MyTweet(Tweetoo tweet) {
 		this.tweet = tweet;
 	}
 	
@@ -113,11 +114,11 @@ public class MyTweet {
 		return tweet.isRetweeted();
 	}
 
-	public Tweet getRetweetedStatus() {
+	public Tweetoo getRetweetedStatus() {
 		return tweet.getRetweetedStatus();
 	}
 
-	public void setRetweetedStatus(Tweet tweet) {
+	public void setRetweetedStatus(Tweetoo tweet) {
 		tweet.setRetweetedStatus(tweet);
 	}
 
@@ -141,11 +142,11 @@ public class MyTweet {
 		return tweet.getFavoriteCount();
 	}
 
-	public Entities getEntities() {
+	public Entitiesee getEntities() {
 		return tweet.getEntities();
 	}
 
-	public void setEntities(Entities ent) {
+	public void setEntities(Entitiesee ent) {
 		tweet.setEntities(ent);
 	}
 

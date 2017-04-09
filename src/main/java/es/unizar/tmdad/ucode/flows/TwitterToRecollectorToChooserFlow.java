@@ -17,6 +17,7 @@ import org.springframework.social.twitter.api.Tweet;
 import es.unizar.tmdad.ucode.domain.Hackathon;
 import es.unizar.tmdad.ucode.domain.MyTweet;
 import es.unizar.tmdad.ucode.domain.TargetedTweet;
+import es.unizar.tmdad.ucode.domain.Tweetoo;
 import es.unizar.tmdad.ucode.repository.HackathonRepository;
 import es.unizar.tmdad.ucode.service.TwitterLookupService;
 
@@ -31,75 +32,95 @@ abstract public class TwitterToRecollectorToChooserFlow {
 	
 	List<String> topics = new ArrayList<String>();
 	
+	
+	abstract protected AbstractMessageChannel requestChooserChannelTwitter();
+
+	abstract protected AbstractMessageChannel requestChannelRabbitMQChooser1();
+	
+	abstract protected AbstractMessageChannel requestChannelRabbitMQChooser2();
+	
+	abstract protected AbstractMessageChannel requestChannelRabbitMQChooser3();
+	
 	@Scheduled(fixedDelay=5000)
-	public void getTopicsFromDB() {
-		
+	public void getTopicsFromDB() {		
 		System.out.println("QUERIESSSSSSSS -> " + tls.getQueries());
 		
 		hackathonRepository.save(new Hackathon(null,"uCode", "EINA" , "buena web", "to"));
 		List<Hackathon> hackathons = hackathonRepository.findAll();
 		topics = hackathons.stream()
-		.map(x -> x.getTag()).collect(Collectors.toList());
-	}
+				.map(x -> x.getTag()).collect(Collectors.toList());
+	}	
 	
 	/*
 	 * Updater
 	 */
 	@Bean
-	public IntegrationFlow sendTweet() {
+	public IntegrationFlow chooserOne() {
 		return IntegrationFlows
-				.from(requestChannelRabbitMQUpdater())
+				.from(requestChooserChannelTwitter())
 				.filter("payload instanceof T(org.springframework.social.twitter.api.Tweet)")
+				//.transform(highlight2())
+				.transform(localTransform())
 				.transform(identifyTopics())
 				.split(TargetedTweet.class, duplicateByTopic())
-				//.transform(highlight())
-				.handle("streamSendingService", "sendTweet").get();
+				.transform(highlight(1))
+				.handle("chooserPropagatorService", "propagateTweet").get();
 	}
 	
 	/*
 	 * Chooser Saver
 	 */
 	@Bean
-	public IntegrationFlow propagateTweet() {
+	public IntegrationFlow chooserTwo() {
 		return IntegrationFlows
-				.from(requestChannelRabbitMQProccessor())
+				.from(requestChooserChannelTwitter())
 				.filter("payload instanceof T(org.springframework.social.twitter.api.Tweet)")
+				//.transform(highlight2())
+				.transform(localTransform())
 				.transform(identifyTopics())
 				.split(TargetedTweet.class, duplicateByTopic())
-				.transform(highlight())
-				.handle("chooserProccessorService", "propagateTweet")
+				.transform(highlight(2))
+				.handle("chooserPropagatorService", "propagateTweet")
 				//.handle("streamSendingService", "sendTweet")
 				//.handle("chooserSaverService", "saveTweet")
 				.get();
 	}
 	
 	@Bean
-	public IntegrationFlow saveTweet() {
+	public IntegrationFlow chooserThree() {
 		return IntegrationFlows
-				.from(requestChannelRabbitMQSaver())
-				.filter("payload instanceof T(org.springframework.social.twitter.api.Tweet)")
+				.from(requestChooserChannelTwitter())
+				.filter("payload instanceof T(org.springframework.social.twitter.api.Tweet)")				
+				.transform(localTransform())
+				//.transform(highlight2())
 				.transform(identifyTopics())
 				.split(TargetedTweet.class, duplicateByTopic())
-				//.transform(highlight())
+				.transform(highlight(3))
 				//.handle("requestProcessorChannel")
+				.handle("chooserPropagatorService", "propagateTweet")
 				//.handle("streamSendingService", "sendTweet")
-				.handle("chooserSaverService", "saveTweet")
+				//.handle("chooserSaverService", "saveTweet")
 				.get();
 	}
-
-	abstract protected AbstractMessageChannel requestChannelRabbitMQUpdater();
 	
-	abstract protected AbstractMessageChannel requestChannelRabbitMQSaver();
 	
-	abstract protected AbstractMessageChannel requestChannelRabbitMQProccessor();
 
-	private GenericTransformer<TargetedTweet, TargetedTweet> highlight() {
+
+	private GenericTransformer<TargetedTweet, TargetedTweet> highlight(int i) {
 		return t -> {			
 			String tag = t.getFirstTarget();
 			String text = t.getTweet().getUnmodifiedText();
-			System.out.println("POST --> " + text);
+			System.out.println("POST " + i + " --> " + text);
 			t.getTweet().setUnmodifiedText(
 					text.replaceAll(tag, "<b>" + tag + "</b>"));
+			return t;
+		};
+	}
+	
+	private GenericTransformer<Tweetoo, Tweetoo> highlight2() {
+		return t -> {
+			String text = t.getUnmodifiedText();
+			System.out.println("ESEEE "+ " --> " + text);
 			return t;
 		};
 	}
@@ -109,9 +130,17 @@ abstract public class TwitterToRecollectorToChooserFlow {
 				.map(x -> new TargetedTweet(t.getTweet(), x))
 				.collect(Collectors.toList());
 	}
+	
+	private GenericTransformer<Tweet, Tweetoo> localTransform() {
+		// The first argument is the MongoDb Id
+		
+		return t -> new Tweetoo(t);
+//		return t -> new Tweetoo(t.getId(), t.getText(), t.getCreatedAt(), t.getFromUser(), 
+//                t.getProfileImageUrl(), t.getToUserId(), t.getFromUserId(), t.getLanguageCode(), t.getSource());
+	}
 
-	private GenericTransformer<Tweet, TargetedTweet> identifyTopics() {
-		// The first argument is the MongoDb Id 
+	private GenericTransformer<Tweetoo, TargetedTweet> identifyTopics() {
+		// The first argument is the MongoDb Id 		
 		return t -> new TargetedTweet(null, new MyTweet(t), 
 										// Debería mirar en la base de datos los hackathones disponibles DONE
 										tls.getQueries().stream()

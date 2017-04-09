@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import es.unizar.tmdad.ucode.domain.TargetedTweet;
 
 @Repository
-public interface TweetRepository extends MongoRepository<TargetedTweet, BigInteger> , TweetRepositoryCustom{
+public interface TweetRepository extends MongoRepository<TargetedTweet, BigInteger> , TweetRepositoryCustom {
 	
 	//List<TargetedTweet> findByText(String text);
 	

@@ -1,5 +1,7 @@
 package es.unizar.tmdad.ucode.flows;
 
+import java.io.Serializable;
+
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.FanoutExchange;
@@ -24,7 +26,7 @@ import es.unizar.tmdad.ucode.domain.TargetedTweet;
 public class ChooserOutputFlowFanout extends ChooserOutputFlow {
 
 	final static String CHOOSER_OUTPUT_FANOUT_EXCHANGE = "chooser_output_fanout";
-	final static String CHOOSER_OUTPUT_FANOUT_A_QUEUE_NAME = "chooser_output_fanout_queue";
+	final static String CHOOSER_OUTPUT_FANOUT_A_QUEUE_NAME = "saver_input_fanout_queue";
 
 	@Autowired
 	RabbitTemplate rabbitTemplate;
@@ -71,15 +73,17 @@ public class ChooserOutputFlowFanout extends ChooserOutputFlow {
 		 *  to RabbitMQ queues in order to be get by processors
 		 */		
 		return IntegrationFlows.from(requestChooserOutputChannel())
-				.transform(highlight())		// Debug Purposes
-				.handle(amqpChooserOutbound()).get();
+				//.transform(Transformers.toJson())
+				//.transform(highlight())		// Debug Purposes
+				.handle(Amqp.outboundAdapter(rabbitTemplate)
+						.exchangeName(CHOOSER_OUTPUT_FANOUT_EXCHANGE)).get();
 	}
 	
-	private GenericTransformer<TargetedTweet, TargetedTweet> highlight() {
+	private GenericTransformer<TargetedTweet, TargetedTweet > highlight() {
 		return t -> {			
 			//String tag = t.getFirstTarget();
 			String text = t.getTweet().getUnmodifiedText();
-			System.out.println("CHOOSER --> " + text);
+			System.out.println("CHOOSER --> " + t);
 			//t.getTweet().setUnmodifiedText(
 			//		text.replaceAll(tag, "<b>" + tag + "</b>"));
 			return t;

@@ -19,19 +19,21 @@ abstract public class SaverFlow {
 
 	@Autowired
 	private TwitterLookupService tls;
+	
+	abstract protected AbstractMessageChannel requestSaverChannel();
 
-	/*@Bean
-	public IntegrationFlow sendTweet() {
+	@Bean
+	public IntegrationFlow saveTweet() {
 		return IntegrationFlows
-				.from(requestChannelRabbitMQ())
-				.filter("payload instanceof T(org.springframework.social.twitter.api.Tweet)")
-				.transform(identifyTopics())
-				.split(TargetedTweet.class, duplicateByTopic())
-				.transform(highlight())
-				.handle("streamSendingService", "sendTweet").get();
-	}*/
+				.from(requestSaverChannel())
+				//.filter("payload instanceof T(org.springframework.social.twitter.api.Tweet)")
+				//.transform(identifyTopics())
+				//.split(TargetedTweet.class, duplicateByTopic())
+				//.transform(highlight())
+				.handle("saverService", "saveTweet").get();
+	}
 
-	//abstract protected AbstractMessageChannel requestSaverChannel();
+	
 
 	/*private GenericTransformer<TargetedTweet, TargetedTweet> highlight() {
 		return t -> {			

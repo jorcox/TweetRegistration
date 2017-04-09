@@ -55,15 +55,65 @@
 
 <div class="container">
 	<div class="row">
-		<div class="form-group">
-		  <label for="sel1">Select hackathon:</label>
-		  <select class="form-control" id="HackathonSelect">
-		    <option>uCode</option>
-		    <option>HackUPC</option>
-		    <option>SpaceApps</option>
-		    <option>Fujitsu</option>
-		  </select>
+		<div class="col-md-4">
+			<div class="form-group">
+			  <label for="sel1">Select hackathon:</label>
+			  <select class="form-control" id="HackathonSelect">
+				    <option>uCode</option>
+				    <option>HackUPC</option>
+				    <option>SpaceApps</option>
+				    <option>Fujitsu</option>
+				    <option>to</option>
+			  </select>
+			</div>
 		</div>
+		<div>
+			<button type="button" class="btn btn-default btn-success" style="margin-top: 25px;" data-toggle="modal" data-target="#addModal">
+			  <span class="glyphicon glyphicon-plus"></span>&nbsp;
+			</button>
+			<button type="button" class="btn btn-default btn-success" style="margin-top: 25px;" data-toggle="modal" data-target="#editModal">
+			  <span class="glyphicon glyphicon-pencil"></span>&nbsp;
+			</button>
+		</div>
+	</div>
+
+	<!-- Modal -->
+	<div id="addModal" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+	
+	    <!-- Modal content-->
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title">Modal Header</h4>
+	      </div>
+	      <div class="modal-body">
+	        <div class="input-group">
+			  <input type="text" class="form-control" placeholder="Name" aria-describedby="basic-addon1">
+			</div>
+			
+			<div class="input-group">
+			  <input type="text" class="form-control" placeholder="Venue" aria-describedby="basic-addon2">
+			</div>
+			
+			<div class="input-group">
+			  <span class="input-group-addon" id="basic-addon3">http://</span>
+			  <input type="text" class="form-control" placeholder="Web" aria-describedby="basic-addon3">
+			  <span class="input-group-addon"></span>
+			</div>
+			
+			<div class="input-group">
+			  <input type="text" class="form-control" placeholder="Tag" aria-describedby="basic-addon4">
+			  <span class="input-group-addon"></span>
+			</div>
+	      </div>
+	      <div class="modal-footer">
+	      	<button type="button" class="btn btn-default btn-success" >Save</button>
+	        <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
+	      </div>
+	    </div>
+	
+	  </div>
 	</div>
 	<div>
 		<div class="col-md-4">

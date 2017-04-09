@@ -17,10 +17,10 @@ import org.springframework.integration.dsl.channel.MessageChannels;
 
 @Configuration
 @Profile("fanout")
-public class UpdaterFlowFanout extends SaverFlow {
+public class UpdaterFlowFanout extends UpdaterFlow {
 
 	final static String CHOOSER_OUTPUT_FANOUT_EXCHANGE = "chooser_output_fanout";
-	final static String CHOOSER_OUTPUT_FANOUT_A_QUEUE_NAME = "chooser_output_fanout_queue";
+	final static String UPDATER_INPUT_FANOUT_A_QUEUE_NAME = "updater_input_fanout_queue";
 
 	@Autowired
 	RabbitTemplate rabbitTemplate;
@@ -28,19 +28,19 @@ public class UpdaterFlowFanout extends SaverFlow {
 	// Configuración RabbitMQ
 
 	@Bean
-	Queue aChooserFanoutQueue() {
-		return new Queue(CHOOSER_OUTPUT_FANOUT_A_QUEUE_NAME, false);
+	Queue aUpdaterFanoutQueue() {
+		return new Queue(UPDATER_INPUT_FANOUT_A_QUEUE_NAME, false);
 	}
 
 	@Bean
-	FanoutExchange chooserFanoutExchange() {
+	FanoutExchange updaterFanoutExchange() {
 		return new FanoutExchange(CHOOSER_OUTPUT_FANOUT_EXCHANGE);
 	}
 
 	@Bean
-	Binding twitterFanoutBinding() {
-		return BindingBuilder.bind(aChooserFanoutQueue()).to(
-				chooserFanoutExchange());
+	Binding updaterFanoutBinding() {
+		return BindingBuilder.bind(aUpdaterFanoutQueue()).to(
+				updaterFanoutExchange());
 	}
 
 	// Flujo # ENVIAR
@@ -88,18 +88,18 @@ public class UpdaterFlowFanout extends SaverFlow {
 	// MessageEndpoint RabbitMQ -(requestChannelRabbitMQ)-> tareas ...
 	//
 
-	/*@Override
+	@Override
 	@Bean
-	public DirectChannel requestSaverChannel() {
+	public DirectChannel requestUpdateChannel() {
 		return MessageChannels.direct().get();
 	}
 
 	@Bean
-	public AmqpInboundChannelAdapter amqpSaverInbound() {
+	public AmqpInboundChannelAdapter amqpUpdaterInbound() {
 		SimpleMessageListenerContainer smlc = new SimpleMessageListenerContainer(
 				rabbitTemplate.getConnectionFactory());
-		smlc.setQueues(aChooserFanoutQueue());
+		smlc.setQueues(aUpdaterFanoutQueue());
 		return Amqp.inboundAdapter(smlc)
-				.outputChannel(requestSaverChannel()).get();
-	}*/
+				.outputChannel(requestUpdateChannel()).get();
+	}
 }

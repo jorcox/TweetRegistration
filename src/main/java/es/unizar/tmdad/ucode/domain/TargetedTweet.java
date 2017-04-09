@@ -1,12 +1,13 @@
 package es.unizar.tmdad.ucode.domain;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
 
-public class TargetedTweet {
+public class TargetedTweet implements Serializable {
 	
 	@Id
 	private BigInteger id;
@@ -19,6 +20,12 @@ public class TargetedTweet {
 		this.id = id;
 		this.tweet = tweet;
 		this.targets = targets;
+	}
+	
+	public TargetedTweet() {
+		/*
+		 * Default constructor is necessary for JSON to object conversion
+		 */
 	}
 	
 	public TargetedTweet(MyTweet tweet, String target) {

@@ -75,7 +75,7 @@ public class StreamSendingService {
 
 		mapa.put(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON);
 		
-		System.out.println("ESPÑAAAAAAAAAAAAA");
+		System.out.println("SENDING TWEET TO CLIENT");
 
 		ops.convertAndSend("/queue/search/" + tweet.getFirstTarget(), tweet.getTweet(), mapa);
 

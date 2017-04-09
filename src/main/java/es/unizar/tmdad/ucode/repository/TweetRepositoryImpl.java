@@ -1,20 +1,14 @@
 package es.unizar.tmdad.ucode.repository;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.mapreduce.GroupBy;
-import org.springframework.data.mongodb.core.mapreduce.GroupByResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import es.unizar.tmdad.ucode.domain.Click;
 import es.unizar.tmdad.ucode.domain.TargetedTweet;
 
 @Repository
@@ -74,6 +68,13 @@ public class TweetRepositoryImpl implements TweetRepositoryCustom {
 	@Override
 	public void update(TargetedTweet cl) {
 		mongoTemplate.save(cl);
+	}
+
+	@Override
+	public List<TargetedTweet> findByHackathon(String hackathon) {
+		// TODO Auto-generated method stub
+		Criteria criteria = Criteria.where("targets").in(hackathon);
+		return mongoTemplate.find(new Query(criteria), TargetedTweet.class);
 	}
 
 //	/**

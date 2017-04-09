@@ -20,7 +20,7 @@ import org.springframework.integration.dsl.channel.MessageChannels;
 public class SaverFlowFanout extends SaverFlow {
 
 	final static String CHOOSER_OUTPUT_FANOUT_EXCHANGE = "chooser_output_fanout";
-	final static String CHOOSER_OUTPUT_FANOUT_A_QUEUE_NAME = "chooser_output_fanout_queue";
+	final static String SAVER_INPUT_FANOUT_A_QUEUE_NAME = "saver_input_fanout_queue";
 
 	@Autowired
 	RabbitTemplate rabbitTemplate;
@@ -28,19 +28,19 @@ public class SaverFlowFanout extends SaverFlow {
 	// Configuración RabbitMQ
 
 	@Bean
-	Queue aChooserFanoutQueue() {
-		return new Queue(CHOOSER_OUTPUT_FANOUT_A_QUEUE_NAME, false);
+	Queue aSaverFanoutQueue() {
+		return new Queue(SAVER_INPUT_FANOUT_A_QUEUE_NAME, false);
 	}
 
 	@Bean
-	FanoutExchange chooserFanoutExchange() {
+	FanoutExchange saverFanoutExchange() {
 		return new FanoutExchange(CHOOSER_OUTPUT_FANOUT_EXCHANGE);
 	}
 
 	@Bean
-	Binding twitterFanoutBinding() {
-		return BindingBuilder.bind(aChooserFanoutQueue()).to(
-				chooserFanoutExchange());
+	Binding saverFanoutBinding() {
+		return BindingBuilder.bind(aSaverFanoutQueue()).to(
+				saverFanoutExchange());
 	}
 
 	// Flujo # ENVIAR
@@ -88,7 +88,7 @@ public class SaverFlowFanout extends SaverFlow {
 	// MessageEndpoint RabbitMQ -(requestChannelRabbitMQ)-> tareas ...
 	//
 
-	/*@Override
+	@Override
 	@Bean
 	public DirectChannel requestSaverChannel() {
 		return MessageChannels.direct().get();
@@ -98,8 +98,8 @@ public class SaverFlowFanout extends SaverFlow {
 	public AmqpInboundChannelAdapter amqpSaverInbound() {
 		SimpleMessageListenerContainer smlc = new SimpleMessageListenerContainer(
 				rabbitTemplate.getConnectionFactory());
-		smlc.setQueues(aChooserFanoutQueue());
+		smlc.setQueues(aSaverFanoutQueue());
 		return Amqp.inboundAdapter(smlc)
 				.outputChannel(requestSaverChannel()).get();
-	}*/
+	}
 }

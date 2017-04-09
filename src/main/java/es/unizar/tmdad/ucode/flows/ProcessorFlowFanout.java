@@ -17,7 +17,7 @@ import org.springframework.integration.dsl.channel.MessageChannels;
 
 @Configuration
 @Profile("fanout")
-public class ProcessorFlowFanout extends SaverFlow {
+public class ProcessorFlowFanout extends ProcessorFlow {
 
 	final static String CHOOSER_OUTPUT_FANOUT_EXCHANGE = "chooser_output_fanout";
 	final static String CHOOSER_OUTPUT_FANOUT_A_QUEUE_NAME = "chooser_output_fanout_queue";
@@ -27,7 +27,7 @@ public class ProcessorFlowFanout extends SaverFlow {
 
 	// Configuración RabbitMQ
 
-	@Bean
+	/*@Bean
 	Queue aChooserFanoutQueue() {
 		return new Queue(CHOOSER_OUTPUT_FANOUT_A_QUEUE_NAME, false);
 	}
@@ -41,7 +41,7 @@ public class ProcessorFlowFanout extends SaverFlow {
 	Binding twitterFanoutBinding() {
 		return BindingBuilder.bind(aChooserFanoutQueue()).to(
 				chooserFanoutExchange());
-	}
+	}*/
 
 	// Flujo # ENVIAR
 	//
