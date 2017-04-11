@@ -21,7 +21,7 @@ import es.unizar.tmdad.ucode.domain.Tweetoo;
 import es.unizar.tmdad.ucode.repository.HackathonRepository;
 import es.unizar.tmdad.ucode.service.TwitterLookupService;
 
-abstract public class TwitterToRecollectorToChooserFlow {
+abstract public class RecollectorInputFlow {
 
 	@Autowired
 	private TwitterLookupService tls;
@@ -43,8 +43,7 @@ abstract public class TwitterToRecollectorToChooserFlow {
 	
 	@Scheduled(fixedDelay=5000)
 	public void getTopicsFromDB() {		
-		System.out.println("QUERIESSSSSSSS -> " + tls.getQueries());
-		
+		//System.out.println("QUERIESSSSSSSS -> " + tls.getQueries());		
 		//hackathonRepository.save(new Hackathon(null,"uCode", "EINA" , "buena web", "to"));
 		List<Hackathon> hackathons = hackathonRepository.findAll();
 		topics = hackathons.stream()
@@ -52,7 +51,7 @@ abstract public class TwitterToRecollectorToChooserFlow {
 	}	
 	
 	/*
-	 * Updater
+	 * First chooser
 	 */
 	@Bean
 	public IntegrationFlow chooserOne() {
@@ -68,7 +67,7 @@ abstract public class TwitterToRecollectorToChooserFlow {
 	}
 	
 	/*
-	 * Chooser Saver
+	 * First chooser
 	 */
 	@Bean
 	public IntegrationFlow chooserTwo() {
@@ -86,6 +85,9 @@ abstract public class TwitterToRecollectorToChooserFlow {
 				.get();
 	}
 	
+	/*
+	 * First chooser
+	 */
 	@Bean
 	public IntegrationFlow chooserThree() {
 		return IntegrationFlows
@@ -131,12 +133,11 @@ abstract public class TwitterToRecollectorToChooserFlow {
 				.collect(Collectors.toList());
 	}
 	
-	private GenericTransformer<Tweet, Tweetoo> localTransform() {
-		// The first argument is the MongoDb Id
-		
+	private GenericTransformer<Tweet, Tweetoo> localTransform() {			
 		return t -> new Tweetoo(t);
-//		return t -> new Tweetoo(t.getId(), t.getText(), t.getCreatedAt(), t.getFromUser(), 
-//                t.getProfileImageUrl(), t.getToUserId(), t.getFromUserId(), t.getLanguageCode(), t.getSource());
+		// The first argument is the MongoDb Id	
+		// return t -> new Tweetoo(t.getId(), t.getText(), t.getCreatedAt(), t.getFromUser(), 
+		//      t.getProfileImageUrl(), t.getToUserId(), t.getFromUserId(), t.getLanguageCode(), t.getSource());
 	}
 
 	private GenericTransformer<Tweetoo, TargetedTweet> identifyTopics() {

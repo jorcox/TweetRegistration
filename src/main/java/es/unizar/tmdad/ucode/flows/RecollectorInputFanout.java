@@ -17,7 +17,7 @@ import org.springframework.social.twitter.api.Tweet;
 
 @Configuration
 @Profile("fanout")
-public class TwitterToRecollectorToChooserFanout extends TwitterToRecollectorToChooserFlow {
+public class RecollectorInputFanout extends RecollectorInputFlow {
 
 	final static String TWITTER_FANOUT_EXCHANGE = "twitter_fanout";
 	final static String TWITTER_FANOUT_A_QUEUE_NAME_OUT = "twitter_fanout_queue_out";
@@ -65,6 +65,9 @@ public class TwitterToRecollectorToChooserFanout extends TwitterToRecollectorToC
 
 	@Override
 	@Bean
+	/* 
+	 * Input channel for twitter API
+	 */
 	public DirectChannel requestChooserChannelTwitter() {
 		return MessageChannels.direct().get();
 	}
@@ -86,7 +89,7 @@ public class TwitterToRecollectorToChooserFanout extends TwitterToRecollectorToC
 				.handle(amqpOutbound()).get();
 	}*/
 	
-	private GenericTransformer<Tweet, Tweet> highlight() {
+	/*private GenericTransformer<Tweet, Tweet> highlight() {
 		return t -> {			
 			//String tag = t.getFirstTarget();
 			String text = t.getUnmodifiedText();
@@ -95,7 +98,7 @@ public class TwitterToRecollectorToChooserFanout extends TwitterToRecollectorToC
 			//		text.replaceAll(tag, "<b>" + tag + "</b>"));
 			return t;
 		};
-	}
+	}*/
 	
 
 	// Flujo #2

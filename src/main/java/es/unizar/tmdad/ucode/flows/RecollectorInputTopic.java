@@ -20,7 +20,7 @@ import org.springframework.integration.dsl.channel.MessageChannels;
 
 @Configuration
 @Profile("topic")
-public class TwitterToRecollectorToChooserTopic extends TwitterToRecollectorToChooserFlow {
+public class RecollectorInputTopic extends RecollectorInputFlow {
 
 	final static String TWITTER_TOPIC_EXCHANGE = "twitter_topic";
 	final static String TWITTER_TOPIC_A_QUEUE_NAME = "twitter_topic_queue";

@@ -23,7 +23,7 @@ import es.unizar.tmdad.ucode.domain.TargetedTweet;
 
 @Configuration
 @Profile("direct")
-public class TwitterToRecollectorToChooserDirect extends TwitterToRecollectorToChooserFlow {
+public class RecollectorInputDirect extends RecollectorInputFlow {
 
 	final static String TWITTER_DIRECT_EXCHANGE = "twitter_direct";
 	final static String TWITTER_DIRECT_A_QUEUE_NAME = "twitter_direct_queue";
