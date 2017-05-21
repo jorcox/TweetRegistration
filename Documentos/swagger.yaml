@@ -1,0 +1,278 @@
+swagger: '2.0'
+info:
+  description: >-
+    Hackathon Tweet Registration auth API. You can find out more about the
+    project at [Github project
+    page](https://github.com/jorcox/TweetRegistration).
+  version: 1.0.0
+  title: Tweet Registration
+  termsOfService: 'http://swagger.io/terms/'
+  contact:
+    email: jorgeES@ieee.org
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: ucode.es
+basePath: /v2
+tags:
+  - name: hackathon
+    description: Everything about your hackathons
+    externalDocs:
+      description: Find out more
+      url: 'http://swagger.io'
+  - name: user
+    description: Operations about user
+    externalDocs:
+      description: Find out more about our store
+      url: 'http://swagger.io'
+schemes:
+  - http
+paths:
+  /hackathon:
+    get:
+      tags:
+        - hackathon
+      summary: Return hackathon info given a tag
+      description: ''
+      operationId: getHackathon
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: query
+          description: Get info of given hackathon tag
+          required: true
+          schema:
+            $ref: '#/definitions/Hackathon'
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid input
+    post:
+      tags:
+        - hackathon
+      summary: Add a new hackathon
+      description: ''
+      operationId: addHackathon
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Hackathon object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/Hackathon'
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Hackathon not found
+        '405':
+          description: Validation exception
+      security:
+        - user_oAuth:
+            - 'write:hackathons'
+            - 'read:hackathons'
+    put:
+      tags:
+        - hackathon
+      summary: Update an existing hacakthon
+      description: ''
+      operationId: updateHackathon
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Hackathon object that needs to be updated
+          required: true
+          schema:
+            $ref: '#/definitions/Hackathon'
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Hackathon not found
+        '405':
+          description: Validation exception
+      security:
+        - user_oAuth:
+            - 'write:hackathons'
+            - 'read:hackathons'
+  /hackathons:
+    get:
+      tags:
+        - hackathon
+      summary: Finds a list of hackathons
+      description: Multiple status values can be provided with comma separated strings
+      operationId: findAllHackathons
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: status
+          in: query
+          description: Status values that need to be considered for filter
+          required: true
+          type: array
+          items:
+            type: string
+            enum:
+              - available
+              - pending
+              - sold
+            default: available
+          collectionFormat: multi
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Hackathon'
+        '400':
+          description: Invalid status value
+      security:
+        - user_oAuth:
+            - 'write:hackathons'
+            - 'read:hackathons'
+  /attendees:
+    get:
+      tags:
+        - attendees
+      summary: Finds all attendees by tags
+      operationId: findAttendees
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: tags
+          in: query
+          description: Tags to filter by
+          required: true
+          type: array
+          items:
+            type: string
+          collectionFormat: multi
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Attendee'
+        '400':
+          description: Invalid tag value
+      security:
+        - user_oAuth:
+            - 'write:hackathons'
+            - 'read:hackathons'
+  /user:
+    post:
+      tags:
+        - user
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Created user object
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        default:
+          description: successful operation
+securityDefinitions:
+  user_oAuth:
+    type: oauth2
+    authorizationUrl: ''
+    flow: implicit
+    scopes:
+      'write:hackathons': modify hackathons in your account
+      'read:hackathons': read your hackathons
+definitions:
+  Query: 
+    type: object
+    properties:
+      text:
+        type: string
+  Hackathon:
+    type: object
+    properties:
+      id:
+        type: string
+        format: int64
+      name:
+        type: string
+      venue:
+        type: string
+      web:
+        type: string
+      tag:
+        type: string
+    xml:
+      name: Order
+  Attendee:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      teeSize:
+        type: string
+      age:
+        type: integer
+      mail:
+        type: string
+    xml:
+      name: Category
+  Tweet:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      text:
+        type: string
+      idStr:
+        type: string
+    xml:
+      name: Category
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      username:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+    xml:
+      name: User
+externalDocs:
+  description: Find out more about Swagger
+  url: 'http://swagger.io'
