@@ -97,9 +97,11 @@ public class StreamSendingService {
 
 		mapa.put(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON);
 		
+		hashtag.sort((o1, o2) -> o2.getCount()-o1.getCount());
+		
 		System.out.println("SENDING HASHTAGS TO CLIENT"  + "(StreamSendinService.java)");
 
-		ops.convertAndSend("/queue/hashtag/", hashtag, mapa);
+		ops.convertAndSend("/queue/hashtags/", hashtag, mapa);
 
 	}
 

@@ -28,9 +28,11 @@ import com.google.common.collect.Lists;
 
 import es.unizar.tmdad.ucode.domain.Attendee;
 import es.unizar.tmdad.ucode.domain.Hackathon;
+import es.unizar.tmdad.ucode.domain.Hashtag;
 import es.unizar.tmdad.ucode.domain.Query;
 import es.unizar.tmdad.ucode.domain.TargetedTweet;
 import es.unizar.tmdad.ucode.repository.HackathonRepository;
+import es.unizar.tmdad.ucode.repository.HashtagRepository;
 import es.unizar.tmdad.ucode.repository.TweetRepository;
 import es.unizar.tmdad.ucode.service.TwitterLookupService;
 
@@ -45,6 +47,9 @@ public class IndexController {
     
     @Autowired
     TweetRepository tweetRepository;
+    
+    @Autowired
+    HashtagRepository hashtagRepository;
 
     @RequestMapping("/")
     public String greeting() {
@@ -61,7 +66,7 @@ public class IndexController {
     @RequestMapping(value = "/hack", method = RequestMethod.GET)
     public List<TargetedTweet> hackathonInfo(Query q) {    	
     	List<TargetedTweet> tweets = tweetRepository.findByHackathon(q.getQuery());
-    	System.out.println(tweets);
+    	//System.out.println(tweets);
     	return Lists.reverse(tweets);
     }
     
@@ -69,7 +74,7 @@ public class IndexController {
     @RequestMapping(value = "/hackathons", method = RequestMethod.GET)
     public List<Hackathon> hackathon() {
     	List<Hackathon> hackathons = hackathonRepository.findAll();
-    	System.out.println(hackathons);
+    	//System.out.println(hackathons);
     	return hackathons;
     }
     
@@ -77,8 +82,17 @@ public class IndexController {
     @RequestMapping(value = "/attendees", method = RequestMethod.GET)
     public List<Attendee> attendee(Query q) {
     	Hackathon hackathon = hackathonRepository.findByTag(q.getQuery());
-    	System.out.println(hackathon);
+    	//System.out.println(hackathon);
     	return hackathon.getAttendees();
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "/hashtags", method = RequestMethod.GET)
+    public List<Hashtag> getAllHashtags() {
+    	List<Hashtag> hashtagList = hashtagRepository.findAll();
+    	hashtagList.sort((o1, o2) -> o2.getCount()-o1.getCount());
+    	//System.out.println(hashtagList);
+    	return hashtagList;
     }
     
 	@RequestMapping(value = "/addHackathon", method = RequestMethod.POST)

@@ -2,9 +2,11 @@ var client;
 
 var subscriptionTweets = null;
 var subscriptionAttendees = null;
+var subscriptionHashtags = null;
 
 var subscriptionEndpoint = '/queue/search/';
 var attendeesSubscriptionEndpoint = '/queue/attendee/';
+var hashtagsSubscriptionEndpoint = '/queue/hashtags/';
 
 
 var currentHackathon;
@@ -12,11 +14,11 @@ var currentHackathon;
 
 
 $(document).ready(function(){
+	stompConnection();
 	loadPage();	
 	saveHackathon();
 	editHackathon();
-	loadEditHackathon();
-	stompConnection();
+	loadEditHackathon();	
 	//registerSearch();
 	//hackathonChange();
 });
@@ -24,7 +26,8 @@ $(document).ready(function(){
 
 function loadPage() {
 	loadSelect();
-	loadAttendees();
+	//loadAttendees();
+	//loadHackathons();
 	hackathonChange();
 }
 
@@ -128,7 +131,7 @@ function stompConnection() {
 function subscribeTwitter(query) {
 	if (subscriptionTweets != null) subscriptionTweets.unsubscribe();
 	
-	client.send('/app/search', {}, JSON.stringify({'query' : query}));
+	//client.send('/app/search', {}, JSON.stringify({'query' : query}));
 	
 	subscriptionTweets = client.subscribe(subscriptionEndpoint + query, function(tweet){		
 		//console.log(tweet);		
@@ -200,13 +203,8 @@ function hackathonChange() {
 
 				$("#resultsBlock").empty().append(html);
 			}			
-		});		
+		});
 
-		$("#resultsBlock").empty();	
-		// Creating WebSocket
-		if (client == null) stompConnection();
-		subscribeTwitter(selectedText);
-		
 		// Attendees retrieval
 		$.getJSON("attendees", {query: selectedText }, function(attendees, status, jqXHR){
 			if(attendees.length > 0) {
@@ -228,12 +226,41 @@ function hackathonChange() {
 			
 				$("#attendeesBlock").empty().append(html);	
 			}			
+		});
+		
+		// Hashtags retrieval
+		$.getJSON("hashtags", function(hashtags, status, jqXHR){
+			if(hashtags.length > 0) {
+				//var data = attendees.map(function(a) {return a.tweet;});	
+			
+				var template = '{{#.}}'	
+				+'<div class="row panel panel-default">'	
+				+	    '<div class="panel-body">{{{name}}}   {{{count}}}</div>'
+				+'</div>'	
+				+'{{/.}}';	
+			
+				var html = Mustache.to_html(template, hashtags);	
+			
+				$("#hashtagsBlock").empty().append(html);	
+			}			
 		});	
+
+
+		$("#resultsBlock").empty();	
+		// Creating WebSocket
+		if (client == null) stompConnection();
+		subscribeTwitter(selectedText);		
+
 	
 		$("#attendeesBlock").empty();	
 		// Creating WebSocket
 		if (client == null) stompConnection();
 		else subscribeAttendees(selectedText);
+		
+		$("#hashtagsBlock").empty();	
+		// Creating WebSocket
+		if (client == null) stompConnection();
+		else subscribeHashtags();
 	});
 }
 
@@ -348,6 +375,33 @@ function subscribeAttendees(query) {
 		var html = Mustache.to_html(template, data);
 
 		$("#attendeesBlock").prepend(html);
+	}, function(error){
+		// Error connecting to the endpoint
+		console.log('Error: ' + error);
+	});
+
+	//client.send('/app/search', {}, JSON.stringify({'query' : query}));
+}
+
+function subscribeHashtags() {
+	if (subscriptionHashtags != null) subscriptionHashtags.unsubscribe();
+	
+	//client.send('/app/search', {}, JSON.stringify({'query' : query}));
+	
+	subscriptionHashtags = client.subscribe(hashtagsSubscriptionEndpoint, function(hashtag){		
+		//console.log(tweet);		
+		//console.log(tweet.id);		
+		var template = '{{#.}}'	
+			+'<div class="row panel panel-default">'	
+			+	    '<div class="panel-body">{{{name}}}   {{{count}}}</div>'
+			+'</div>'	
+			+'{{/.}}';	
+
+		var data = JSON.parse(hashtag.body);
+
+		var html = Mustache.to_html(template, data);
+
+		$("#hashtagsBlock").empty().append(html);
 	}, function(error){
 		// Error connecting to the endpoint
 		console.log('Error: ' + error);
